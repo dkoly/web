@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="index.css">
+  <title>Welcome</title>
+</head>
+<body>
+  
+  <div class="loading-screen" id="loading-screen">
+    <div class="word">LOADING...</div>
+    <div class="overlay"></div>
+  </div>
+  <canvas id="canvas"></canvas>
+  <div class="center-content" id="center-content">
+    <div class="content-box">
+      <div class="header-text">Dmitry Kolyvagin</div>
+      <div class="headline" id="headline"><span class="blinking-cursor-headline">|</span></div>
+    </div>
+    <div class="screen content-hidden">
+      <div class="content">
+        <pre id="welcome-message"></pre>
+        <div id="output"></div>
+      </div>
+      <p id="command-line">$ <span id="input"></span><span class="blinking-cursor">|</span></p>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script type="module">
+    import * as datGui from "https://cdn.skypack.dev/dat.gui@0.7.7";
+
+    const state = {
+      fps: 20,
+      color: "#0f0",
+      charset: "01",
+      size: 15
+    };
+
+    const gui = new datGui.GUI({ autoPlace: false });
+    document.body.appendChild(gui.domElement);
+    gui.domElement.style.display = 'none';
+
+    const fpsCtrl = gui.add(state, "fps").min(1).max(120).step(1);
+    gui.addColor(state, "color");
+    gui.add(state, "charset");
+    const sizeCtrl = gui.add(state, "size").min(1).max(120).step(1);
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    let w, h, p;
+    const resize = () => {
+      w = canvas.width = innerWidth;
+      h = canvas.height = innerHeight;
+
+      p = Array(Math.ceil(w / state.size)).fill(0);
+    };
+    window.addEventListener("resize", resize);
+    sizeCtrl.onFinishChange((s) => resize());
+    resize();
+
+    const random = (items) => items[Math.floor(Math.random() * items.length)];
+
+    const draw = () => {
+      ctx.fillStyle = "rgba(0,0,0,.05)";
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = state.color;
+
+      ctx.font = state.size + 'px sans-serif'
+      for (let i = 0; i < p.length; i++) {
+        let v = p[i];
+        ctx.fillText(random(state.charset), i * state.size, v);
+        p[i] = v >= h || v >= 10000 * Math.random() ? 0 : v + state.size;
+      }
+    };
+
+    let interval = setInterval(draw, 1000 / state.fps);
+    fpsCtrl.onFinishChange((fps) => {
+      if (interval) {
+        clearInterval(interval);
+      }
+      interval = setInterval(draw, 1000 / fps);
+    });
+  </script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    (function($) {
+      $.fn.lettering = function() {
+        return this.each(function() {
+          var $this = $(this), letters = $this.text().split('');
+          $this.empty();
+          $.each(letters, function(i, letter) {
+            $this.append($('<span>' + letter + '</span>'));
+          });
+        });
+      };
+    })(jQuery);
+
+    function Ticker(elem) {
+      elem.lettering();
+      this.done = false;
+      this.cycleCount = 5;
+      this.cycleCurrent = 0;
+      this.chars = '01'.split('');
+      this.charsCount = this.chars.length;
+      this.letters = elem.find('span');
+      this.letterCount = this.letters.length;
+      this.letterCurrent = 0;
+
+      this.letters.each(function() {
+        var $this = $(this);
+        $this.attr('data-orig', $this.text());
+        $this.text('-');
+      });
+    }
+
+    Ticker.prototype.getChar = function() {
+      return this.chars[Math.floor(Math.random() * this.charsCount)];
+    };
+
+    Ticker.prototype.reset = function() {
+      this.done = false;
+      this.cycleCurrent = 0;
+      this.letterCurrent = 0;
+      this.letters.each(function() {
+        var $this = $(this);
+        $this.text($this.attr('data-orig'));
+        $this.removeClass('done');
+      });
+      this.loop();
+    };
+
+    Ticker.prototype.loop = function() {
+      var self = this;
+
+      this.letters.each(function(index, elem) {
+        var $elem = $(elem);
+        if (index >= self.letterCurrent) {
+          if ($elem.text() !== ' ') {
+            $elem.text(self.getChar());
+            $elem.css('opacity', Math.random());
+          }
+        }
+      });
+
+      if (this.cycleCurrent < this.cycleCount) {
+        this.cycleCurrent++;
+      } else if (this.letterCurrent < this.letterCount) {
+        var currLetter = this.letters.eq(this.letterCurrent);
+        this.cycleCurrent = 0;
+        currLetter.text(currLetter.attr('data-orig')).css('opacity', 1).addClass('done');
+        this.letterCurrent++;
+      } else {
+        this.done = true;
+      }
+
+      if (!this.done) {
+        requestAnimationFrame(function() {
+          self.loop();
+        });
+      } else {
+        setTimeout(function() {
+          self.reset();
+        }, 750);
+      }
+    };
+
+    $(document).ready(function() {
+      var $words = $('.word');
+
+      $words.each(function() {
+        var $this = $(this),
+            ticker = new Ticker($this).reset();
+        $this.data('ticker', ticker);
+      });
+
+      setTimeout(() => {
+        $('#loading-screen').fadeOut(() => {
+          document.getElementById('center-content').classList.remove('content-hidden');
+          document.querySelector('.screen').classList.remove('content-hidden');
+          document.querySelector('#command-line').style.display = 'block';
+
+          typeWriter(welcomeMessage, document.getElementById('welcome-message'), () => {
+            document.addEventListener('keydown', handleKeydown);
+          });
+
+          startTypewriter();
+        });
+      }, 2500);
+    });
+
+    const welcomeMessage = `To see more about me, choose from the following options:  
+    
+[*] about
+[*] skills
+[*] contact`;
+
+    const typingSpeed = 50;
+    let input = '';
+
+    function typeWriter(message, element, callback) {
+      let i = 0;
+      function type() {
+        if (i < message.length) {
+          element.textContent += message.charAt(i);
+          i++;
+          setTimeout(type, typingSpeed);
+        } else if (callback) {
+          callback();
+        }
+      }
+      type();
+    }
+
+    function handleKeydown(e) {
+      if (e.key === 'Enter') {
+        processCommand(input);
+        input = '';
+        document.getElementById('input').textContent = input;
+      } else if (e.key === 'Backspace') {
+        input = input.slice(0, -1);
+        document.getElementById('input').textContent = input;
+      } else if (/^[a-zA-Z0-9\s]$/i.test(e.key)) {
+        input += e.key;
+        document.getElementById('input').textContent = input;
+      }
+    }
+
+    function processCommand(command) {
+      const validCommands = {
+        'about': 'about.html',
+        'skills': 'skills.html',
+        'contact': 'contact.html'
+      };
+
+      const page = validCommands[command.trim().toLowerCase()];
+
+      if (page) {
+        showLoadingAndRedirect(page);
+      } else {
+        showError("Input not recognized. Please type one of the following options: about, skills, contact.");
+      }
+    }
+
+    function showLoadingAndRedirect(page) {
+      let percentage = 0;
+      const interval = setInterval(() => {
+        document.getElementById('output').textContent = `
+        Loading... ${percentage}%`;
+        percentage += 1;
+        if (percentage > 100) {
+          clearInterval(interval);
+          window.location.href = page;
+        }
+      }, 20); // 20ms * 100 = 2 seconds
+    }
+
+    function showError(message) {
+      const errorElement = document.createElement('p');
+      errorElement.textContent = '$ ' + message;
+      document.getElementById('output').appendChild(errorElement);
+    }
+
+    function startTypewriter() {
+      const phrases = [
+        'Cybersecurity Pro',
+        'Tech Enthusiast',
+        'Offensive Ops',
+        'OSINT and Recon ',
+        'Coding Noob',
+        'Gamer'
+      ];
+      let i = 0;
+      function typeNextPhrase() {
+        if (i < phrases.length) {
+          typeWriterWithCursor(phrases[i], document.getElementById('headline'), () => {
+            setTimeout(() => {
+              document.getElementById('headline').innerHTML = '<span class="blinking-cursor-headline">|</span>';
+              i++;
+              typeNextPhrase();
+            }, 2000);
+          });
+        } else {
+          i = 0;
+          typeNextPhrase();
+        }
+      }
+      typeNextPhrase();
+    }
+
+    function typeWriterWithCursor(message, element, callback) {
+      let i = 0;
+      function type() {
+        if (i < message.length) {
+          element.innerHTML = message.substring(0, i + 1) + '<span class="blinking-cursor-headline">|</span>';
+          i++;
+          setTimeout(type, typingSpeed);
+        } else {
+          element.innerHTML = message;
+          if (callback) {
+            callback();
+          }
+        }
+      }
+      type();
+    }
+  </script>
+</body>
+</html>

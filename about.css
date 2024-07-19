@@ -1,0 +1,66 @@
+/* Specific styles for About Me page */
+
+h1 {
+  margin-top: 20px;
+  font-size: 3em;
+  text-shadow: 0 0 2px #00ff0077, 0 0 5px #00ff0077;
+}
+
+h2 {
+  margin-top: 20px;
+  font-size: 2em;
+  text-shadow: 0 0 2px #00FF00, 0 0 5px #00FF00;
+}
+
+.content-box h3 {
+  margin-top: 30px;
+  font-size: 2em;
+  text-shadow: 0 0 2px #00ff0077, 0 0 5px #00ff0077;
+}
+
+p, ul {
+  margin: 20px 0;
+  font-size: 1.2em;
+  line-height: 1.6;
+  max-width: 800px;
+  text-align: justify;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li::before {
+  content: "• ";
+  color: #00FF00;
+}
+
+.content-box {
+  background: rgba(0, 0, 0, 0.959);
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 40px;
+  width: auto;
+  max-width: 600px;
+  text-align: center;
+  z-index: 1; 
+  position: relative;
+  border: 1px solid #00FF00;
+  box-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00;
+}
+
+.image-box {
+  padding: 20px;
+  border-radius: 10px;
+  width: auto;
+  max-width: auto;
+  z-index: 1; 
+  position: relative;
+}
+
+.about-content {
+  font-size: 1.5em;
+  color: #00FF00;
+  text-shadow: 0 0 2px #00ff0077, 0 0 5px #00ff0077;
+}

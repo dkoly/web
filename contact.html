@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Me</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="contact.css">
+</head>
+<body>
+  <div class="transition-screen" id="transition-screen"></div>
+
+  <nav class="menu">
+    <div class="logo-container">
+      <div class="logo" id="logo">DK</div>
+    </div>
+    <div class="menu-item"><a href="index.html">Home</a></div>
+    <div class="menu-item"><a href="about.html">About</a></div>
+    <div class="menu-item"><a href="skills.html">Skills</a></div>
+    <div class="menu-item"><a href="contact.html">Contact</a></div>
+  </nav>
+  <div class="content" id="content">
+    <canvas id="canvas"></canvas>
+    <div class="contact-box">
+      <h1>Contact Me</h1>
+    </div>
+    <div class="contact-box">
+      <div class="contact-method">
+        <p>Email:<a href="mailto:dmitry.kolyvagin@gmail.com"> dmitry.kolyvagin@gmail.com</a><br />LinkedIn:<a href="https://www.linkedin.com/in/dmitry-kolyvagin/" target="_blank"> dmitry-kolyvagin</a><br />GitHub:<a href="https://github.com/dkoly" target="_blank"> dkoly</a></p>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script type="module">
+    import * as datGui from "https://cdn.skypack.dev/dat.gui@0.7.7";
+
+    const state = {
+      fps: 20,
+      color: "#0f0",
+      charset: "01",
+      size: 15
+    };
+
+    const gui = new datGui.GUI({ autoPlace: false });
+    document.body.appendChild(gui.domElement);
+    gui.domElement.style.display = 'none';
+
+    const fpsCtrl = gui.add(state, "fps").min(1).max(120).step(1);
+    gui.addColor(state, "color");
+    gui.add(state, "charset");
+    const sizeCtrl = gui.add(state, "size").min(1).max(120).step(1);
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    let w, h, p;
+    const resize = () => {
+      w = canvas.width = innerWidth;
+      h = canvas.height = innerHeight;
+
+      p = Array(Math.ceil(w / state.size)).fill(0);
+    };
+    window.addEventListener("resize", resize);
+    sizeCtrl.onFinishChange((s) => resize());
+    resize();
+
+    const random = (items) => items[Math.floor(Math.random() * items.length)];
+
+    const draw = () => {
+      ctx.fillStyle = "rgba(0,0,0,.05)";
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = state.color;
+
+      ctx.font = state.size + 'px sans-serif'
+      for (let i = 0; i < p.length; i++) {
+        let v = p[i];
+        ctx.fillText(random(state.charset), i * state.size, v);
+        p[i] = v >= h || v >= 10000 * Math.random() ? 0 : v + state.size;
+      }
+    };
+
+    let interval = setInterval(draw, 1000 / state.fps);
+    fpsCtrl.onFinishChange((fps) => {
+      if (interval) {
+        clearInterval(interval);
+      }
+      interval = setInterval(draw, 1000 / fps);
+    });
+  </script>
+  <script>
+    $(document).ready(function() {
+
+      $('#transition-screen').fadeIn(200, function() {
+        $(this).fadeOut(200, function() {
+          $('#content').fadeIn();
+        });
+      });
+
+      function animateLogo() {
+        $('#logo').animate({ color: '#00CC00', fontWeight: 'normal' }, 2000)
+                  .animate({ color: '#00FF00', fontWeight: 'bold' }, 2000, animateLogo);
+      }
+      animateLogo();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Skills</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="skills.css">
+</head>
+<body>
+  <div class="transition-screen" id="transition-screen"></div>
+
+  <nav class="menu">
+    <div class="logo-container">
+      <div class="logo" id="logo">DK</div>
+    </div>
+    <div class="menu-item"><a href="index.html">Home</a></div>
+    <div class="menu-item"><a href="about.html">About</a></div>
+    <div class="menu-item"><a href="skills.html">Skills</a></div>
+    <div class="menu-item"><a href="contact.html">Contact</a></div>
+  </nav>
+
+  <div class="content" id="content">
+    <div class="skill-box"><h1>Skills</h1></div>
+    <canvas id="canvas"></canvas>
+    <div class="skill-container">
+      <div class="skill-category">
+        <img src="cloud.png" alt="Cloud Security" class="category-icon">
+        <h2>Cloud Security</h2>
+        <ul>
+            <li><h3>IAM policies and Roles</h3></li>
+            <li><h3>Threat Monitoring Controls</h3></li>
+            <li><h3>CI/CD Pipeline Security</h3></li>
+            <li><h3>Security Posture Management via CSPM</h3></li>
+        </ul>
+    </div>
+
+    <div class="skill-category">
+        <img src="network.png" alt="Network Security" class="category-icon">
+        <h2>Network Security</h2>
+        <ul>
+            <li><h3>Endpoint Security and Hardening</h3></li>
+            <li><h3>Network Traffic Monitoring</h3></li>
+            <li><h3>Log Analysis</h3></li>
+            <li><h3>Network Security Tools Management</h3></li>
+        </ul>
+    </div>
+
+    <div class="skill-category">
+        <img src="shield.png" alt="Security Operations" class="category-icon">
+        <h2>Security Operations</h2>
+        <ul>
+            <li><h3>SIEM Management</h3></li>
+            <li><h3>SOAR Integration and Automation</h3></li>
+            <li><h3>Incident Response</h3></li>
+            <li><h3>Vulnerability and Patch Management</h3></li>
+            <li><h3>Threat Hunting</h3></li>
+        </ul>
+    </div>
+
+    <div class="skill-category">
+        <img src="swords.png" alt="Offensive Skills" class="category-icon">
+        <h2>Offensive Skills</h2>
+        <ul>
+            <li><h3>Attack Surface Mapping</h3></li>
+            <li><h3>Cloud Security Testing</h3></li>
+            <li><h3>Security Configuration Testing</h3></li>
+            <li><h3>API Security Testing</h3></li>
+            <li><h3>Wireless Network Security Testing</h3></li>
+            <li><h3>OSINT and Recon</h3></li>
+        </ul>
+    </div>
+
+    <div class="skill-category">
+        <img src="cert.png" alt="Certifications & Courses" class="category-icon-cert">
+        <h2>Certifications & Courses</h2>
+        <ul>
+            <li><h3>GIAC Certified Incident Handler (GCIH)</h3></li>
+            <li><h3>Certified Ethical Hacker Master (CEH)</h3></li>
+            <li><h3>CompTIA Security+</h3></li>
+            <li><h3>CompTIA Linux+</h3></li>
+            <li><h3>APISec - API Penetration Testing</h3></li>
+            <li><h3>AZ-900: Microsoft Azure Fundamentals</h3></li>
+            <li><h3>Python Developer: Certified Entry-Level Python Programmer</h3></li>
+
+        </ul>
+    </div>
+
+    <div class="skill-category">
+        <img src="favorite.png" alt="CFavorite Tools" class="category-icon">
+        <h2>Favorite Tools</h2>
+        <ul>
+            <li><h3>Nmap, Snort, Wireshark</h3></li>
+            <li><h3>Burp, Zap, Nikto, BeEf, Postman </h3></li>
+            <li><h3>Yersinia, Aircrack-ng</h3></li>
+            <li><h3>MSF, BloodHound </h3></li>
+            <li><h3>Hashcat, John</h3></li>
+            <li><h3>Maltego, recon-ng</h3></li>
+        </ul>
+    </div>
+
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script type="module">
+    import * as datGui from "https://cdn.skypack.dev/dat.gui@0.7.7";
+
+    const state = {
+      fps: 20,
+      color: "#0f0",
+      charset: "01",
+      size: 15
+    };
+
+    const gui = new datGui.GUI({ autoPlace: false });
+    document.body.appendChild(gui.domElement);
+    gui.domElement.style.display = 'none'; // Hide the GUI
+
+    const fpsCtrl = gui.add(state, "fps").min(1).max(120).step(1);
+    gui.addColor(state, "color");
+    gui.add(state, "charset");
+    const sizeCtrl = gui.add(state, "size").min(1).max(120).step(1);
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    let w, h, p;
+    const resize = () => {
+      w = canvas.width = innerWidth;
+      h = canvas.height = innerHeight;
+
+      p = Array(Math.ceil(w / state.size)).fill(0);
+    };
+    window.addEventListener("resize", resize);
+    sizeCtrl.onFinishChange((s) => resize());
+    resize();
+
+    const random = (items) => items[Math.floor(Math.random() * items.length)];
+
+    const draw = () => {
+      ctx.fillStyle = "rgba(0,0,0,.05)";
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = state.color;
+
+      ctx.font = state.size + 'px sans-serif'
+      for (let i = 0; i < p.length; i++) {
+        let v = p[i];
+        ctx.fillText(random(state.charset), i * state.size, v);
+        p[i] = v >= h || v >= 10000 * Math.random() ? 0 : v + state.size;
+      }
+    };
+
+    let interval = setInterval(draw, 1000 / state.fps);
+    fpsCtrl.onFinishChange((fps) => {
+      if (interval) {
+        clearInterval(interval);
+      }
+      interval = setInterval(draw, 1000 / fps);
+    });
+
+    $(document).ready(function() {
+  
+      $('#transition-screen').fadeIn(200, function() {
+        $(this).fadeOut(200, function() {
+          $('#content').fadeIn();
+        });
+      });
+
+        function animateLogo() {
+          $('#logo').animate({ color: '#00CC00', fontWeight: 'normal' }, 2000)
+                    .animate({ color: '#00FF00', fontWeight: 'bold' }, 2000, animateLogo);
+        }
+        animateLogo();
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+/* Specific styles for Contact Me page */
+body, html {
+    overflow: hidden;
+}
+
+h1 {
+    margin-top: 20px;
+    font-size: 3em;
+    text-shadow: 0 0 2px #00ff0077, 0 0 5px #00ff0077;
+    text-align: center;
+  }
+
+  .contact-box {
+  background: rgba(0, 0, 0, 0.959);
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 40px;
+  width: auto;
+  max-width: 600px;
+  text-align: left;
+  z-index: 1; 
+  position: relative;
+  border: 2px solid #00FF00;
+  box-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00;
+}
+
+  .contact-methods {
+    display: flex;
+    flex-direction: column;
+    margin-top: 40px;
+  }
+  
+  .contact-method {
+    display: flex;
+    margin: 20px 0;
+  }
+  
+  .contact-logo {
+    width: 250px;
+    height: 100px;
+    margin-right: 20px;
+  }
+  
+  .contact-method p {
+    font-size: 1.5em;
+    color: #00FF00;
+    text-shadow: 0 0 2px #00ff0077, 0 0 5px #00ff0077;
+  }
+  
+  .contact-method a {
+    color: #00FF00;
+    text-decoration: none;
+  }
+  
+  .contact-method a:hover {
+    text-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00, 0 0 15px #00FF00;
+  }
+  

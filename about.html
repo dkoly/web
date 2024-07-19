@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Me</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="about.css">
+</head>
+<body>
+  <div class="transition-screen" id="transition-screen"></div>
+
+  <nav class="menu">
+    <div class="logo-container">
+      <div class="logo" id="logo">DK</div>
+    </div>
+    <div class="menu-item"><a href="index.html">Home</a></div>
+    <div class="menu-item"><a href="about.html">About</a></div>
+    <div class="menu-item"><a href="skills.html">Skills</a></div>
+    <div class="menu-item"><a href="contact.html">Contact</a></div>
+  </nav>
+
+  <div class="content" id="content">
+    <canvas id="canvas"></canvas>
+      <div class="content-box"><h1>About Me</h1></div>
+      <div class="content-box">
+        <div class="image-box">
+          <div class="profile-image-container">
+            <img src="me.png" alt="Profile Image" class="profile-image" id="profile-image">
+          </div>
+        </div>
+        <p class="typewriter" data-speed="10" id="summary" style="display: none;">Hi! I'm Dmitry, a cybersecurity professional who loves tackling all kinds of challenges. My daily routine blends blue and red teaming activities, keeping things exciting and dynamic. I'm skilled at setting up and testing controls on networks and endpoints to ensure everything runs smoothly. I also specialize in streamlining operations, implementing monitoring, and automating processes, whether in the cloud or on-prem.</p>
+        <h3 class="about-content">Experience</h3>
+        <p class="typewriter" data-speed="10" id="experience" style="display: none;">I have over 5 years of professional experience, during which I've embraced new projects and continuously expanded my knowledge. My journey began as a computer technician, where I repaired various IT equipment and quickly moved on to supporting enterprise infrastructure for large corporations. As a data center engineer, I gained hands-on experience installing and managing data center infrastructure — cabling, power systems, network equipment, and servers — ensuring everything ran smoothly and efficiently. Balancing a full-time job with my studies, I pursued and completed my MS in Cybersecurity, along with earning several certifications. This dedication led me to my current role as a cybersecurity analyst. I feel incredibly fortunate to have found my passion and to make a living doing what I love. I'm always on the lookout for new challenges and opportunities to grow and make meaningful contributions.</p>
+        <h3 class="about-content">Education & Certifications</h3>
+        <ul class="typewriter" data-speed="10" id="education" style="display: none;">I have a Master's degree in Cybersecurity and currently hold GCIH, CEH, Security+ and Linux+ certifications. </ul>
+        <h3 class="about-content">Interests & Passions</h3>
+        <p class="typewriter" data-speed="10" id="interests" style="display: none;">In my free time, I love diving into personal projects. Whether it's setting up security controls on my home network, trying out new tools, or exploring niche technologies, I'm always learning something new. I also enjoy video games, flying drones and tinkering with hardware.</p>
+        <h3 class="about-content">Goals</h3>
+        <p class="typewriter" data-speed="10" id="goals" style="display: none;">Currently, my main goal is to take the PEN-200 course and pass the OSCP certification exam. Looking ahead, I’m excited about transitioning more into offensive security. It’s a field that really sparks my interest. With enough determination and passion, I believe anything is possible, and I’m committed to growing my skills and making a meaningful impact in the cybersecurity world.</p>
+      </div>
+    </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+
+  $('#transition-screen').fadeIn(200, function() {
+    $(this).fadeOut(200, function() {
+      $('#content').fadeIn();
+      startTypewriter();
+    });
+  });
+
+  function typeWriter(element, callback) {
+    const textArray = element.innerHTML.split('');
+    const speed = element.getAttribute('data-speed') || 75;
+    element.innerHTML = '';
+    element.style.display = 'block'; 
+    textArray.forEach((char, i) => {
+      setTimeout(() => {
+        element.innerHTML += char;
+        if (i === textArray.length - 1 && callback) {
+          callback();
+        }
+      }, speed * i);
+    });
+  }
+
+  function startTypewriter() {
+    const elements = [
+      document.getElementById('summary'),
+      document.getElementById('experience'),
+      document.getElementById('education'),
+      document.getElementById('interests'),
+      document.getElementById('goals')
+    ];
+    
+    function typeNext(index) {
+      if (index < elements.length) {
+        typeWriter(elements[index], () => typeNext(index + 1));
+      }
+    }
+
+    typeNext(0);
+  }
+
+
+  // Logo animation, needs work 
+  function animateLogo() {
+    $('#logo').animate({ color: '#00CC00', fontWeight: 'normal' }, 2000)
+              .animate({ color: '#00FF00', fontWeight: 'bold' }, 2000, animateLogo);
+  }
+  animateLogo();
+
+  // Profile image, needs work 
+  const profileImage = document.getElementById('profile-image');
+
+  profileImage.addEventListener('mousemove', (e) => {
+    const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+    const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+    profileImage.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+  });
+
+  profileImage.addEventListener('mouseenter', () => {
+    profileImage.style.transition = 'none';
+  });
+
+  profileImage.addEventListener('mouseleave', () => {
+    profileImage.style.transition = 'transform 0.5s ease';
+    profileImage.style.transform = 'rotateY(0deg) rotateX(0deg)';
+  });
+});
+  </script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script type="module">
+    import * as datGui from "https://cdn.skypack.dev/dat.gui@0.7.7";
+
+    const state = {
+      fps: 20,
+      color: "#0f0",
+      charset: "01",
+      size: 15
+    };
+
+    const gui = new datGui.GUI({ autoPlace: false });
+    document.body.appendChild(gui.domElement);
+    gui.domElement.style.display = 'none';
+
+    const fpsCtrl = gui.add(state, "fps").min(1).max(120).step(1);
+    gui.addColor(state, "color");
+    gui.add(state, "charset");
+    const sizeCtrl = gui.add(state, "size").min(1).max(120).step(1);
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    let w, h, p;
+    const resize = () => {
+      w = canvas.width = innerWidth;
+      h = canvas.height = innerHeight;
+
+      p = Array(Math.ceil(w / state.size)).fill(0);
+    };
+    window.addEventListener("resize", resize);
+    sizeCtrl.onFinishChange((s) => resize());
+    resize();
+
+    const random = (items) => items[Math.floor(Math.random() * items.length)];
+
+    const draw = () => {
+      ctx.fillStyle = "rgba(0,0,0,.05)";
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = state.color;
+
+      ctx.font = state.size + 'px sans-serif'
+      for (let i = 0; i < p.length; i++) {
+        let v = p[i];
+        ctx.fillText(random(state.charset), i * state.size, v);
+        p[i] = v >= h || v >= 10000 * Math.random() ? 0 : v + state.size;
+      }
+    };
+
+    let interval = setInterval(draw, 1000 / state.fps);
+    fpsCtrl.onFinishChange((fps) => {
+      if (interval) {
+        clearInterval(interval);
+      }
+      interval = setInterval(draw, 1000 / fps);
+    });
+  </script>
+</body>
+</html>
