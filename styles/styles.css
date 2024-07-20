@@ -150,3 +150,18 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #00CC00; 
 }
+
+@media (max-width: 768px) {
+  .menu {
+    flex-direction: row; /* Stack the menu items vertically */
+    align-items: flex-start; /* Align items to the start */
+  }
+
+  .menu-item {
+    margin: 20px 1; /* Add margin between menu items */
+  }
+
+  .logo-container {
+    margin-bottom: auto; /* Add space below the logo */
+  }
+}
